@@ -21,8 +21,8 @@ const store = new Vuex.Store({
 		isLogin({commit}) {
 			commit('ISLOGIN');
 		},
-		setUserInfo({commit}, name, avatar, id, accesstoken) {
-			commit('SETUSERINFO', name, avatar, id, accesstoken);
+		setUserInfo({commit}, userInfo) {
+			commit('SETUSERINFO', userInfo);
 		},
 		setTipContent({commit}, content) {
 			commit('SETTIPCONTENT', content);
@@ -44,11 +44,11 @@ const store = new Vuex.Store({
 			state.isLogin = false;
 		},
 		// 设置登录用户信息
-		SETUSERINFO (state, name, avatar, id, accesstoken) {
-			state.userInfo.loginname = name;
-			state.userInfo.avatar = avatar;
-			state.userInfo.id = id;
-			state.userInfo.accesstoken = accesstoken;
+		SETUSERINFO (state, userInfo) {
+			state.userInfo.loginname = userInfo.name;
+			state.userInfo.avatar = userInfo.avatar;
+			state.userInfo.id = userInfo.id;
+			state.userInfo.accesstoken = userInfo.accesstoken;
 		},
 		// 设置tips弹窗的提示信息
 		SETTIPCONTENT (state, content) {
@@ -69,6 +69,9 @@ const store = new Vuex.Store({
 		},
 		getUserInfo (state) {
 			return state.userInfo;
+		},
+		getUserInfoAccesstoken(state, getters) {
+			return getters.getUserInfo.accesstoken;
 		},
 		getTipShow (state) {
 			return state.tipShow;

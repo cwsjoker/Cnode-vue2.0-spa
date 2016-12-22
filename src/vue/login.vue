@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<nv-header></nv-header>
+		<tips></tips>
 		<div class="login-con">
 			<h2>登录</h2>
 			<div>
@@ -16,8 +17,7 @@
 <script>
 	import axios from 'axios';
 	import nvHeader from '../components/header.vue';
-	// import {isLogin, setUserInfo, setNotMessageCount} from '../vuex/actions';
-	// import {getLoginState, getUserInfo, getNotMessageCount} from '../vuex/getters';
+	import tips from '../components/tips.vue';
 	export default {
 		data : function(){
 			return {
@@ -26,45 +26,52 @@
 		},
 		methods : {
 			login : function() {
+				if(this.strToken.trim() === '') {
+					this.$store.default.dispatch('setTipShow', true);
+					this.$store.default.dispatch('setTipContent', 'accessToken不能为空！');
+					return;
+				}
 				const rqdata = {
-					'accesstoken' : this.strToken
+					'accesstoken' : this.strToken.trim()
 				}
 				axios.post('https://cnodejs.org/api/v1/accesstoken?accesstoken='+ this.strToken)
-				.then((response) => {
-					console.log(response);
-					if(response.data.success){
-						console.log(1);
-						const data = response.data;
-						console.log(data);
+				.then((response_info) => {
+					if(response_info.data.success){
+						const data = response_info.data;
 						// 登入成功改变isLogin的状态为true
 						this.$store.default.dispatch('isLogin');
-						this.$store.default.dispatch('setUserInfo', data.loginname, data.avatar_url, data.id, this.strToken);
-						// if(this.$store.default.getters.getUserInfo) {
-							// 获取消息
-							axios.get('https://cnodejs.org/api/v1/message/count?accesstoken='+ this.strToken)
-							.then((reaponse) => {
-								if(response.data.success) {
-									this.$store.default.dispatch('getNotMessageCount', response.data.data);
+						const userInfo = {
+							'name' : data.loginname,
+							'avatar' : data.avatar_url,
+							'id' : data.id,
+							'accesstoken' : this.strToken.trim()
+						}
+						this.$store.default.dispatch('setUserInfo', userInfo);
+							// 获取未读消息，并设置vuex
+							axios.get('https://cnodejs.org/api/v1/message/count?accesstoken='+ this.strToken.trim())
+							.then((response_count) => {
+								if(response_count.data.success) {
+									this.$store.default.dispatch('setNotMessageCount', response_count.data.data);
 									window.history.back();
 								}
 							})
-							.then(function(error) {
+							.catch(function(error) {
 								console.log('请求错误');
 							});
-							
-						// }
 					}else{
 						// 失败
 					}
 				})
-				// .catch(function(error) {
-				// 	console.log('请求错误');
-				// })
-				
+				.catch((error) => {
+					console.log(error);
+					this.$store.default.dispatch('setTipShow', true);
+					this.$store.default.dispatch('setTipContent', '错误的accessToken!');
+				})		
 			}
 		},
 		components : {
-			nvHeader
+			nvHeader,
+			tips
 		}
 	}
 </script>

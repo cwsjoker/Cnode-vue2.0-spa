@@ -11,7 +11,7 @@
 						<span>作者{{art.author_name}}</span>
 						<span>{{art.reply_count}}次回复</span>
 						<span>{{art.visit_count}}次浏览</span>
-						<span class="edit" v-if="LoginState && username === art.author_name" @click="editTopic">编辑</span>
+						<span class="edit" v-if="LoginState && userInfo.loginname === art.author_name" @click="editTopic">编辑</span>
 					</div>
 				</div>
 				<div class="articlecontent" v-html="art.content"></div>
@@ -28,7 +28,7 @@
 							<span class="re-time">{{index + 1}}楼{{reitem.create_at | getLastTime}}</span>
 							<div class="replyhandle">
 								<em class="upbtn" :class="{'isupbtn' : reitem.isup}" @click="upreply(index, reitem.id, reitem.author.loginname)">赞{{reitem.ups.length}}</em>
-								<em class="deletebtn" v-if="username === reitem.author.loginname" @click="deletereply">删</em>
+								<em class="deletebtn" v-if="userInfo.loginname === reitem.author.loginname" @click="deletereply">删</em>
 								<em class="replybtn" @click="replythis(reitem.id)">回</em>
 							</div>
 						</div>
@@ -47,13 +47,10 @@
 	</div>
 </template>
 <script>
-	// import store from '../vuex/store';
 	import axios from 'axios';
 	import nvHeader from '../components/header.vue';
 	import tips from '../components/tips.vue';
 	import rePly from '../components/reply.vue';
-	// import {setTipShow, setTipContent} from '../vuex/actions';
-	// import {getLoginState, getUserInfo} from '../vuex/getters';
 	export default {
 		data : function() {
 			return {
@@ -72,9 +69,6 @@
 				},
 				replies : [],
 				articleId : '',
-				userid : this.$store.default.getters.getUserInfo.id || '',
-				username : this.$store.default.getters.getUserInfo.loginname || '',
-				accesstoken : this.$store.default.getters.getUserInfo.accesstoken || '',
 				replythisid : ''
 			}
 		},
@@ -99,29 +93,28 @@
                     	};
                     	this.replies = D.replies;
                     	// 判断本条回复是否自己已点赞
-                    	if(this.userid != ''){
+                    	if(this.userInfo.id != ''){
                     		// 循环评论
 	                    	for (const repliesItem of this.replies) {
 	                    		// 循环评论的回复
 	                    		for (const repliesItemUps of repliesItem.ups) {
-	                    			if(repliesItemUps === this.userid){
+	                    			if(repliesItemUps === this.userInfo.id){
 	                    				console.log('已赞');
 	                    				repliesItem.isup = true;
 	                    				break;
 	                    			}
-	                    		};
-	                    	};
-	                    	console.log(this.replies);
+	                    		}
+	                    	}
                     	}
                     }
 				})
 				.catch(function(error) {
-					console.log('请求错误');
+					console.log(error);
 				})
 				// 更改收藏状态
 				if(this.LoginState) {
 					// 登录状态，判断是否收藏本文章
-					axios.get('https://cnodejs.org/api/v1/topic_collect/' + this.username)
+					axios.get('https://cnodejs.org/api/v1/topic_collect/' + this.userInfo.loginname)
 					.then((response) => {
 						if(response.data.success) {
 							const d = response.data;
@@ -136,13 +129,18 @@
 						}
 					})
 					.catch(function(error) {
-						console.log('请求错误');
+						console.log(error);
 					})
 				} 
 		},
 		computed : {
+			// 登陆状态
 			LoginState() {
 				return this.$store.default.getters.getLoginState;
+			},
+			// 登陆用户信息
+			userInfo() {
+				return this.$store.default.getters.getUserInfo;
 			}
 		},
 		methods : {
@@ -150,32 +148,40 @@
 			collect : function() {
 				if(!this.LoginState) {
 					// 未登陆不能进行主题收藏
-					// this.hand_tipShow(true);
-					// this.hand_tipContent('您还未登录，不能进行收藏！');
 					this.$store.default.dispatch('setTipShow', true);
 					this.$store.default.dispatch('setTipContent', '您还未登录，不能进行收藏！');
 					return;
 				}
-				const rqdata = {
-					'accesstoken' : this.accesstoken,
-					'topic_id' : this.articleId
-				}
 				if(this.conllection.is) {
 					// 已收藏，进行取消收藏操作
-					$.post('https://cnodejs.org/api/v1/topic_collect/de_collect', rqdata, (d) => {
-						if(d.success) {
+					axios.post('https://cnodejs.org/api/v1/topic_collect/de_collect', {
+						accesstoken : this.userInfo.accesstoken,
+						topic_id : this.articleId
+					})
+					.then((response) => {
+						if(response.data.success) {
 							this.conllection.is = false;
 							this.conllection.title = '收藏';
 						}
 					})
+					.catch(function(error) {
+						console.log(error);
+					});
 				}else {
 					// 未收藏，进行收藏操作
-					$.post('https://cnodejs.org/api/v1/topic_collect/collect', rqdata, (d) => {
-						if(d.success) {
+					axios.post('https://cnodejs.org/api/v1/topic_collect/collect', {
+						accesstoken : this.userInfo.accesstoken,
+						topic_id : this.articleId
+					})
+					.then((response) => {
+						if(response.data.success) {
 							this.conllection.is = true;
 							this.conllection.title = '取消收藏';
 						}
 					})
+					.catch(function(error) {
+						console.log(error);
+					});
 				}
 			},
 			// 编辑文章
@@ -186,15 +192,13 @@
 			replythis : function(id) {
 				if(!this.LoginState){
 					// 未登陆，不能进行评论,直接去登录页面
-					this.$route.router.go({name : 'login'});
+					this.$router.push({name : 'login'});
 					return;
 				}
 				this.replythisid = id;
 			},
 			deletereply : function() {
 				// cnode暂时没有删除的api接口
-				// this.hand_tipShow(true);
-				// this.hand_tipContent('暂时不支持删除评论功能！');
 				this.$store.default.dispatch('setTipShow', true);
 				this.$store.default.dispatch('setTipContent', '暂时不支持删除评论功能！');
 				return;
@@ -203,57 +207,43 @@
 			upreply : function(index, replieId, loginname) {
 				if(!this.LoginState){
 					// 用户还没有登录，不能进行点赞功能
-					// this.hand_tipShow(true);
-					// this.hand_tipContent('您还未登录，不能进行点赞！');
 					this.$store.default.dispatch('setTipShow', true);
 					this.$store.default.dispatch('setTipContent', '您还未登录，不能进行点赞！');
 					return;
 				}
-				if(loginname === this.username) {
+				if(loginname === this.userInfo.loginname) {
 					// 不能为自己的评论进行点赞功能
-					// this.hand_tipShow(true);
-					// this.hand_tipContent('不能为自己点赞！');
 					this.$store.default.dispatch('setTipShow', true);
 					this.$store.default.dispatch('setTipContent', '不能为自己点赞！');
 					return;
 				}
-				const rqdata = {
-					'accesstoken' : this.accesstoken
-				}
-				$.post('https://cnodejs.org/api/v1/reply/'+replieId+'/ups', rqdata, (data) => {
-					if(data.success){
-						console.log(data);
+				axios.post('https://cnodejs.org/api/v1/reply/'+replieId+'/ups', {
+					accesstoken : this.userInfo.accesstoken
+				})
+				.then((response) => {
+					if(response.data.success){
+						const data = response.data;
 						if(data.action === 'up'){
 							// 点赞
 							this.replies[index].ups.push('');
 							this.replies[index].isup = true;
-							console.log(this.replies[index]);
 						}else{
 							// 取消点赞
 							this.replies[index].ups.pop('');
 							this.replies[index].isup = false;
-							console.log(this.replies[index]);
 						}
 					}
+				})
+				.catch(function(error) {
+					console.log(error);
 				})
 			}
 		},
 		components : {
-			'nv-header' : nvHeader,
-			're-ply' : rePly,
-			'tips' : tips
+			nvHeader,
+			rePly,
+			tips
 		}
-		// store : store,
-		// vuex : {
-		// 	actions : {
-		// 		hand_tipShow : setTipShow,
-		// 		hand_tipContent : setTipContent
-		// 	},
-		// 	getters : {
-		// 		ache_userLoginState : getLoginState,
-		// 		ache_getUserInfo :  getUserInfo
-		// 	}
-		// }
 	}
 </script>
 <style lang="sass">

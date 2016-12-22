@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<nv-header></nv-header>
 		<div class="artlist">
 			<ul class="artlistTab clearfix">
 				<li v-for="(item, index) in itemTab" :class="{'on':initIndex === index}" v-on:click="changeTab(index)">{{item.title}}</li>
@@ -29,6 +30,7 @@
 </template>
 <script>
 	import axios from 'axios';
+	import nvHeader from '../components/header.vue';
 	import nvTop from '../components/returnTop.vue';
 	export default {
 		data : function() {
@@ -100,6 +102,7 @@
 			}
 		},
 		components : {
+			nvHeader,
 			nvTop
 		},
 		destroyed : function() {

@@ -14,10 +14,10 @@
 	</div>
 </template>
 <script>
-	import store from '../vuex/store';
+	import axios from 'axios';
 	import nvHeader from '../components/header.vue';
-	import {isLogin, setUserInfo, setNotMessageCount} from '../vuex/actions';
-	import {getLoginState, getUserInfo, getNotMessageCount} from '../vuex/getters';
+	// import {isLogin, setUserInfo, setNotMessageCount} from '../vuex/actions';
+	// import {getLoginState, getUserInfo, getNotMessageCount} from '../vuex/getters';
 	export default {
 		data : function(){
 			return {
@@ -29,43 +29,42 @@
 				const rqdata = {
 					'accesstoken' : this.strToken
 				}
-
-				$.post('https://cnodejs.org/api/v1/accesstoken', rqdata, (data) => {
-					if(data){
+				axios.post('https://cnodejs.org/api/v1/accesstoken?accesstoken='+ this.strToken)
+				.then((response) => {
+					console.log(response);
+					if(response.data.success){
+						console.log(1);
+						const data = response.data;
+						console.log(data);
 						// 登入成功改变isLogin的状态为true
-						this.hand_userLogin();
-						this.hand_setUserInfo(data.loginname, data.avatar_url, data.id, this.strToken)
-						console.log(JSON.stringify(this.ache_getUserInfo));
-						if(this.ache_getUserInfo) {
+						this.$store.default.dispatch('isLogin');
+						this.$store.default.dispatch('setUserInfo', data.loginname, data.avatar_url, data.id, this.strToken);
+						// if(this.$store.default.getters.getUserInfo) {
 							// 获取消息
-							$.get('https://cnodejs.org/api/v1/message/count', rqdata, (d) => {
-								if(d.success) {
-									this.hand_setNotMessageCount(d.data);
+							axios.get('https://cnodejs.org/api/v1/message/count?accesstoken='+ this.strToken)
+							.then((reaponse) => {
+								if(response.data.success) {
+									this.$store.default.dispatch('getNotMessageCount', response.data.data);
 									window.history.back();
 								}
 							})
-						}
+							.then(function(error) {
+								console.log('请求错误');
+							});
+							
+						// }
 					}else{
 						// 失败
 					}
 				})
+				// .catch(function(error) {
+				// 	console.log('请求错误');
+				// })
+				
 			}
 		},
 		components : {
-			'nv-header' : nvHeader
-		},
-		store : store,
-		vuex : {
-			actions : {
-				hand_userLogin : isLogin,
-				hand_setUserInfo : setUserInfo,
-				hand_setNotMessageCount : setNotMessageCount
-			},
-			getters : {
-				ache_userLoginState : getLoginState,
-				ache_getUserInfo :  getUserInfo,
-				ache_getNotMessageCount : getNotMessageCount
-			}
+			nvHeader
 		}
 	}
 </script>

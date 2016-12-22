@@ -22,14 +22,16 @@
 			<div class="userTopics">
 				<div class="userTopicsTitle">创建主题</div>
 				<div class="userTopicsBox">
-					<div v-for="topic in recent_topics" class="topicsitem clearfix" v-link="{name:'article',params:{id:topic.id}}">
-						<a class="avatar" href="javascript:void(0);">
-							<img :src="topic.author.avatar_url" :alt="topic.author.loginname">
-						</a>
-						<div class="art-inf">
-							<a class="title">{{topic.title}}</a>
-							<span class="last-time">{{topic.last_reply_at | getLastTime }}</span>
-						</div>
+					<div v-for="topic in recent_topics" class="topicsitem clearfix">
+						<router-link :to="{name:'article',params:{id:topic.id}}">
+							<a class="avatar" href="javascript:void(0);">
+								<img :src="topic.author.avatar_url" :alt="topic.author.loginname">
+							</a>
+							<div class="art-inf">
+								<a class="title">{{topic.title}}</a>
+								<span class="last-time">{{topic.last_reply_at | getLastTime }}</span>
+							</div>
+						</router-link>
 					</div>
 					<div class="nodata" v-if="topicsShow">
 						<div class="nodataimg"></div>

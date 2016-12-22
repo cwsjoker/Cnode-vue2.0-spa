@@ -46,7 +46,6 @@ const store = new Vuex.Store({
 		// 设置登录用户信息
 		SETUSERINFO (state, name, avatar, id, accesstoken) {
 			state.userInfo.loginname = name;
-			console.log(state.userInfo.loginname);
 			state.userInfo.avatar = avatar;
 			state.userInfo.id = id;
 			state.userInfo.accesstoken = accesstoken;

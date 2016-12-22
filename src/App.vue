@@ -1,16 +1,14 @@
 <template>
 	<div>
-		<nv-header></nv-header>
-		<article-list></article-list>
+		<H2>请等待</H2>
 	</div>
 </template>
 <script>
-	import nvHeader from './components/header.vue';
-	import articleList from './vue/articleList.vue';
 	export default {
-		components : {
-			nvHeader,
-			articleList
+		mounted() {
+			setTimeout(() => {
+				this.$router.push({name : 'articleList'});
+			}, 1000);
 		}
 	}
 </script>

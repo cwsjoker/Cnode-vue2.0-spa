@@ -2,7 +2,6 @@ var Vue = require('vue');
 var VueRouter = require('vue-router');
 // var axios = require('axios');
 var store = require('./store');
-console.log(store);
 var filters = require('./filters');
 //引入css重置文件,基本的样式文件
 require('./css/reset.css');
@@ -17,6 +16,11 @@ Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
 const home = resolve => {
     require.ensure(['./App.vue'], () => {
         resolve(require('./App.vue'));
+    });
+};
+const articleList = resolve => {
+    require.ensure(['./vue/articleList.vue'], () => {
+        resolve(require('./vue/articleList.vue'));
     });
 };
 const about = resolve => {
@@ -41,15 +45,19 @@ const userhome = resolve => {
 }
 const routes = [{
         path: '/',
-        // name: 'home',
+        name: 'home',
         component: home
     },{
+        path: '/articleList',
+        name: 'articleList',
+        component: articleList
+    },{
         path: '/login',
-        // name: 'login',
+        name: 'login',
         component: login
     },{
         path: '/about',
-        // name: 'about',
+        name: 'about',
         component: about
     },{
         path: '/article/:id',
@@ -65,6 +73,7 @@ const routes = [{
     }];
 const router = new VueRouter({
     mode: 'history',
+    base: __dirname,
     routes
 });
 new Vue({

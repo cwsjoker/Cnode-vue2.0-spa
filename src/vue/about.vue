@@ -17,13 +17,11 @@
 	</div>
 </template>
 <script>
-	import store from '../vuex/store';
 	import nvHeader from '../components/header.vue';
 	export default {
 		components : {
-			'nv-header' : nvHeader
-		},
-		store : store
+			nvHeader
+		}
 	}
 </script>
 <style lang="sass">

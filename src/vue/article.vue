@@ -28,14 +28,14 @@
 							<span class="re-time">{{index + 1}}楼{{reitem.create_at | getLastTime}}</span>
 							<div class="replyhandle">
 								<em class="upbtn" :class="{'isupbtn' : reitem.isup}" @click="upreply(index, reitem.id, reitem.author.loginname)">赞{{reitem.ups.length}}</em>
-								<em class="deletebtn" v-if="userInfo.loginname === reitem.author.loginname" @click="deletereply">删</em>
+								<em class="deletebtn" v-if="userInfo.loginname === reitem.author.loginname" @click="deletereply(reitem.id)">删</em>
 								<em class="replybtn" @click="replythis(reitem.id)">回</em>
 							</div>
 						</div>
 						<div class="repliescon">
 							<div class="repliescontent" v-html="reitem.content"></div>
 						</div>
-						<!-- <re-ply :replycontent.sync="replies" :artid="articleId" :islogin="ache_userLoginState" :replyid="reitem.id" :replythisid.sync="replythisid" :replyto="reitem.author.loginname" v-if="replythisid === reitem.id"></re-ply> -->
+						<re-ply :replycontent="replies" :artid="article_Id" :replyid="reitem.id" :replythisid="replythisid" :replyto="reitem.author.loginname" v-if="replythisid === reitem.id" v-on:recomment="recommentClearId"></re-ply>
 					</li>
 				</ul>
 			</div>
@@ -73,9 +73,7 @@
 			}
 		},
 		mounted : function() {
-				console.log(this.$store);
 				const artid = this.$route.params.id;
-				console.log(this.article_Id);
 				// 获取文章详情
 				axios.get('https://cnodejs.org/api/v1/topic/'+artid)
 				.then((response) => {
@@ -100,7 +98,7 @@
 	                    		// 循环评论的回复
 	                    		for (const repliesItemUps of repliesItem.ups) {
 	                    			if(repliesItemUps === this.userInfo.id){
-	                    				console.log('已赞');
+	                    				// console.log('已赞');
 	                    				repliesItem.isup = true;
 	                    				break;
 	                    			}
@@ -121,7 +119,7 @@
 							const d = response.data;
 							for (const i of d.data) {
 								if (this.articleId === i.id) {
-									console.log('用户已收藏文章');
+									// console.log('用户已收藏文章');
 									this.conllection.is = true;
 									this.conllection.title = '取消收藏';
 									break;
@@ -147,6 +145,7 @@
 			replies() {
 				return this.$store.default.getters.getReplies;
 			},
+			// 获取文章id
 			article_Id() {
 				return this.$route.params.id;
 			}
@@ -203,9 +202,10 @@
 					this.$router.push({name : 'login'});
 					return;
 				}
+				console.log(id);
 				this.replythisid = id;
 			},
-			deletereply : function() {
+			deletereply : function(id) {
 				// cnode暂时没有删除的api接口
 				this.$store.default.dispatch('setTipShow', true);
 				this.$store.default.dispatch('setTipContent', '暂时不支持删除评论功能！');
@@ -245,6 +245,9 @@
 				.catch(function(error) {
 					console.log(error);
 				})
+			},
+			recommentClearId : function() {
+				this.replythisid = '';
 			}
 		},
 		components : {

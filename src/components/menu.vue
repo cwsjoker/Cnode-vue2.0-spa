@@ -2,10 +2,10 @@
 	<div class="meun" :class="{'showMeun':showm}">
 		<div class="user_info" v-if="loginStatus">
 			<div class="avatar">
-				<img :src="user_avatar" alt="">
+				<img :src="userInfo.avatar" alt="">
 			</div>
 			<div class="name">
-				<p v-text="user_name"></p>
+				<p v-text="userInfo.loginname"></p>
 			</div>
 		</div>
 		<div class="meun-list">
@@ -24,8 +24,8 @@
 		props : ['showm'],
 		data : function() {
 			return {
-				user_name : this.$store.default.getters.getUserInfo.loginname || '',
-				user_avatar : this.$store.default.getters.getUserInfo.avatar || ''
+				// user_name : this.$store.default.getters.getUserInfo.loginname || '',
+				// user_avatar : this.$store.default.getters.getUserInfo.avatar || ''
 			}
 		},
 		computed : {
@@ -34,6 +34,9 @@
 			},
 			messageCount() {
 				return this.$store.default.getters.getNotMessageCount;
+			},
+			userInfo() {
+				return this.$store.default.getters.getUserInfo;
 			}
 		},
 		methods : {

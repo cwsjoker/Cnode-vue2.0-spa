@@ -1,8 +1,7 @@
 <template>
 	<div class="reply-box">
 		<div class="textinp">
-			<!-- v-el:textarea -->
-			<textarea v-model="repliescontent" placeholder="请输入留言"></textarea>
+			<textarea ref="textarea" v-model="repliescontent" placeholder="请输入留言"></textarea>
 		</div>
 		<div class="textsub">
 			<span class="rebtn" @click="recomment">回复</span>
@@ -16,19 +15,15 @@
 		props : ['replycontent', 'artid', 'replyid', 'replythisid', 'replyto'],
 		data : function() {
 			return {
-				repliescontent : ''
+				repliescontent : '',
+				last_text : '<br/><br/>来自炫酷吊炸天 <a class="form" href=https://github.com/cwsjoker/Cnode-vue-spa">Cnode</a>'
 			}
 		},
 		mounted : function() {
-			console.log(this.replycontent);
-			console.log(this.artid);
-			console.log(this.replyid);
-			console.log(this.replythisid);
-			console.log(this.replyto);
-			if(this.replythisid){
+			if(this.replyid){
 				this.repliescontent = '@' + this.replyto + ' ';
 			}
-			// this.$els.textarea.focus();
+			this.$refs.textarea.focus();
 		},
 		computed: {
 			// 登陆状态
@@ -42,50 +37,48 @@
 		},
 		methods : {
 			recomment : function() {
-				if(this.replyid) {
-					console.log(1);
-				}else{
-					console.log(2);
-				}
-				return;
 				// 判断是否登录，如果为登录去登录页面
 				if(this.LoginState){
 					// 判断内容是否为空
-					if(this.repliescontent.trim() !== ''){
+					if(this.repliescontent !== ''){
 						// 回复内容不为空
 						// const arr = window.location.href.split('/');
-
-						const url = 'https://cnodejs.org/api/v1/topic/'+ this.artid +'/replies';
-						// const rqdata = {
-						// 		'accesstoken' : this.userInfo.accesstoken,
-						// 		'content' : this.repliescontent.trim(),
-						// 		'replies' : this.replyid
-						// }
-						axios.post(url, {
+						let id = '';
+						this.replyid ? id = this.replyid : id = '';
+						axios.post('https://cnodejs.org/api/v1/topic/'+ this.artid +'/replies', {
 							accesstoken : this.userInfo.accesstoken,
-							content : this.repliescontent.trim(),
-							replies : this.replyid
+							content : this.repliescontent + this.last_text,
+							replies : id
 						})
 						.then((response) => {
 							if(response.data.success){
 								// 评论成功
 								const time = new Date();
-								this.replycontent.push({
-									'author' : {
-										'avatar_url' : this.userInfo.avatar,
-										'loginname' : this.userInfo.loginname
-									},
-									'content' : this.repliescontent,
-									'create_at' : time,
-									'id' : this.userInfo.id,
-									'reply_id' : this.replyid,
-									'ups' : []
-								});
-								this.$store.default.dispatch('setReplies', this.replycontent);
-								this.repliescontent = '';
-								if(this.replythisid){
-									this.replythisid = '';
-								}
+								// this.replycontent.push({
+								// 	'author' : {
+								// 		'avatar_url' : this.userInfo.avatar,
+								// 		'loginname' : this.userInfo.loginname
+								// 	},
+								// 	'content' : this.repliescontent + this.last_text,
+								// 	'create_at' : time,
+								// 	'id' : this.userInfo.id,
+								// 	'reply_id' : id,
+								// 	'ups' : []
+								// });
+								axios.get('https://cnodejs.org/api/v1/topic/'+this.artid)
+								.then((response_reply) => {
+									if(response_reply.data.success) {
+										const D = response_reply.data.data;
+										this.$store.default.dispatch('setReplies', D.replies);
+										this.repliescontent = '';
+										if(this.replythisid) {
+											this.$emit('recomment');
+										}
+									}
+								})
+								.catch(function(error) {
+									console.log(error);
+								})
 							}else{
 								// 提交评论失败
 							}

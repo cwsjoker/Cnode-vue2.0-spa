@@ -5,14 +5,12 @@
 	</div>
 </template>
 <script>
-	import store from './vuex/store';
 	import nvHeader from './components/header.vue';
 	import articleList from './vue/articleList.vue';
 	export default {
 		components : {
 			'nv-header' : nvHeader,
 			'article-list' : articleList
-		},
-		store : store
+		}
 	}
 </script>

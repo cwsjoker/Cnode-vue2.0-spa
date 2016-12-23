@@ -1,7 +1,8 @@
 <template>
 	<div class="reply-box">
 		<div class="textinp">
-			<textarea v-el:textarea v-model="repliescontent" placeholder="请输入留言"></textarea>
+			<!-- v-el:textarea -->
+			<textarea v-model="repliescontent" placeholder="请输入留言"></textarea>
 		</div>
 		<div class="textsub">
 			<span class="rebtn" @click="recomment">回复</span>
@@ -9,57 +10,78 @@
 	</div>
 </template>
 <script>
-	import {setTipShow, setTipContent} from '../vuex/actions';
-	import {getUserInfo} from '../vuex/getters';
+	import axios from 'axios';
 	export default {
-		props : ['replycontent', 'artid', 'islogin', 'replyid', 'replythisid', 'replyto'],
+		// 本页面的评论， 回复文章id， 回复某条评论的id， 该评论id，回复某条评论的所有者
+		props : ['replycontent', 'artid', 'replyid', 'replythisid', 'replyto'],
 		data : function() {
 			return {
-				repliescontent : '',
-				accesstoken : this.getUserInfo.accesstoken
+				repliescontent : ''
 			}
 		},
-		ready : function() {
+		mounted : function() {
+			console.log(this.replycontent);
+			console.log(this.artid);
+			console.log(this.replyid);
 			console.log(this.replythisid);
 			console.log(this.replyto);
 			if(this.replythisid){
 				this.repliescontent = '@' + this.replyto + ' ';
 			}
-			this.$els.textarea.focus();
+			// this.$els.textarea.focus();
+		},
+		computed: {
+			// 登陆状态
+			LoginState() {
+				return this.$store.default.getters.getLoginState;
+			},
+			// 登陆用户信息
+			userInfo() {
+				return this.$store.default.getters.getUserInfo;
+			}
 		},
 		methods : {
 			recomment : function() {
+				if(this.replyid) {
+					console.log(1);
+				}else{
+					console.log(2);
+				}
+				return;
 				// 判断是否登录，如果为登录去登录页面
-				// console.log(this.replycontent);
-				// console.log(this.artid);
-				// console.log(this.islogin);
-				// console.log(this.replyid);
-				if(this.islogin){
+				if(this.LoginState){
 					// 判断内容是否为空
-					if(this.repliescontent !== ''){
+					if(this.repliescontent.trim() !== ''){
 						// 回复内容不为空
 						// const arr = window.location.href.split('/');
-						const time = new Date();
+
 						const url = 'https://cnodejs.org/api/v1/topic/'+ this.artid +'/replies';
-						const rqdata = {
-								'accesstoken' : this.accesstoken,
-								'content' : this.repliescontent,
-								'replies' : this.replyid
-						}
-						$.post(url, rqdata, (data) => {
-							if(data){
+						// const rqdata = {
+						// 		'accesstoken' : this.userInfo.accesstoken,
+						// 		'content' : this.repliescontent.trim(),
+						// 		'replies' : this.replyid
+						// }
+						axios.post(url, {
+							accesstoken : this.userInfo.accesstoken,
+							content : this.repliescontent.trim(),
+							replies : this.replyid
+						})
+						.then((response) => {
+							if(response.data.success){
 								// 评论成功
+								const time = new Date();
 								this.replycontent.push({
 									'author' : {
-										'avatar_url' : getUserInfo.avatar,
-										'loginname' : getUserInfo.loginname
+										'avatar_url' : this.userInfo.avatar,
+										'loginname' : this.userInfo.loginname
 									},
 									'content' : this.repliescontent,
 									'create_at' : time,
-									'id' : getUserInfo.id,
+									'id' : this.userInfo.id,
 									'reply_id' : this.replyid,
 									'ups' : []
-								})
+								});
+								this.$store.default.dispatch('setReplies', this.replycontent);
 								this.repliescontent = '';
 								if(this.replythisid){
 									this.replythisid = '';
@@ -68,23 +90,17 @@
 								// 提交评论失败
 							}
 						})
+						.catch(function(error) {
+							console.log(error);
+						})
 					}else{
 						// 内容为空
-						this.tipShow(true);
-						this.tipContent('回复内容不能为空。');
+						this.$store.default.dispatch('setTipShow', true);
+						this.$store.default.dispatch('setTipContent', '回复内容不能为空！');
 					}
 				}else{
-					this.$route.router.go({name : 'login'});
+					this.$router.push({name : 'login'});
 				}
-			}
-		},
-		vuex : {
-			actions : {
-				tipShow : setTipShow,
-				tipContent : setTipContent
-			},
-			getters : {
-				getUserInfo : getUserInfo
 			}
 		}
 	}

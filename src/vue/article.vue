@@ -39,10 +39,10 @@
 					</li>
 				</ul>
 			</div>
-			<!-- <div class="recommentbox">
+			<div class="recommentbox">
 				<p>留下你的足迹:</p>
-				<re-ply :replycontent.sync="replies" :artid="articleId" :islogin="ache_userLoginState" :replyid=""></re-ply>
-			</div> -->
+				<re-ply :replycontent="replies" :artid="article_Id"></re-ply>
+			</div>
 		</div>
 	</div>
 </template>
@@ -67,16 +67,17 @@
 					'is' : false,
 					'title' : '收藏'
 				},
-				replies : [],
-				articleId : '',
+				// replies : [],
+				// articleId : '12',
 				replythisid : ''
 			}
 		},
 		mounted : function() {
-			// data (transition){
-				this.articleId = this.$route.params.id;
+				console.log(this.$store);
+				const artid = this.$route.params.id;
+				console.log(this.article_Id);
 				// 获取文章详情
-				axios.get('https://cnodejs.org/api/v1/topic/'+this.articleId)
+				axios.get('https://cnodejs.org/api/v1/topic/'+artid)
 				.then((response) => {
                     if(response.data.success){
                     	var D = response.data.data;
@@ -91,7 +92,7 @@
                     	for (const replies of D.replies) {
                     		replies.isup = false;
                     	};
-                    	this.replies = D.replies;
+                    	this.replies = this.$store.default.dispatch('setReplies', D.replies);
                     	// 判断本条回复是否自己已点赞
                     	if(this.userInfo.id != ''){
                     		// 循环评论
@@ -141,6 +142,13 @@
 			// 登陆用户信息
 			userInfo() {
 				return this.$store.default.getters.getUserInfo;
+			},
+			// 获取文章评论
+			replies() {
+				return this.$store.default.getters.getReplies;
+			},
+			article_Id() {
+				return this.$route.params.id;
 			}
 		},
 		methods : {

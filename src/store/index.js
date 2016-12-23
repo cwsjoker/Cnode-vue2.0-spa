@@ -15,7 +15,8 @@ const store = new Vuex.Store({
 		},
 		tipContent : '',
 		tipShow : false,
-		message_count : 0
+		message_count : 0,
+		replies : []
 	},
 	actions: {
 		isLogin({commit}) {
@@ -32,6 +33,9 @@ const store = new Vuex.Store({
 		},
 		setNotMessageCount({commit}, count) {
 			commit('SETNOTMESSAGECOUNT', count);
+		},
+		setReplies({commit}, replies) {
+			commit('SETREPLIES', replies);
 		}
 	},
 	mutations: {
@@ -61,6 +65,10 @@ const store = new Vuex.Store({
 		// 设置未读消息条数
 		SETNOTMESSAGECOUNT (state, count) {
 			state.message_count = count;
+		},
+		// 设置当前文章评论
+		SETREPLIES (state, replies) {
+			state.replies = replies;
 		}
 	},
 	getters: {
@@ -81,6 +89,9 @@ const store = new Vuex.Store({
 		},
 		getNotMessageCount (state) {
 			return state.message_count;
+		},
+		getReplies (state) {
+			return state.replies;
 		}
 	}
 })

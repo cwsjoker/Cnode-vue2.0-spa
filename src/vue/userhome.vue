@@ -43,14 +43,16 @@
 			<div class="userReplies">
 				<div class="userRepliesTitle">参与主题</div>
 				<div class="userRepliesBox">
-					<div v-for="replies in recent_replies" class="repliesitem clearfix" v-link="{name:'article',params:{id:replies.id}}">
-						<a class="avatar" href="javascript:void(0);" v-link="{name:'userhome',params:{username:replies.author.loginname}}">
-							<img :src="replies.author.avatar_url" :alt="replies.author.loginname">
-						</a>
-						<div class="art-inf">
-							<a class="title">{{replies.title}}</a>
-							<span class="last-time">{{replies.last_reply_at | getLastTime }}</span>
-						</div>
+					<div v-for="replies in recent_replies" class="repliesitem clearfix">
+						<router-link :to="{name:'article',params:{id:replies.id}}">
+							<router-link class="avatar" :to="{name:'userhome',params:{username:replies.author.loginname}}">
+								<img :src="replies.author.avatar_url" :alt="replies.author.loginname">
+							</router-link>
+							<div class="art-inf">
+								<a class="title">{{replies.title}}</a>
+								<span class="last-time">{{replies.last_reply_at | getLastTime }}</span>
+							</div>
+						</router-link>
 					</div>
 					<div class="nodata" v-if="repliesShow">
 						<div class="nodataimg"></div>
@@ -62,14 +64,16 @@
 			<div class="userCollect">
 				<div class="userCollectTitle">收藏主题</div>
 				<div class="userCollectBox">
-					<div v-for="collect in topic_collect" class="collectitem clearfix" v-link="{name:'article',params:{id:collect.id}}">
-						<a class="avatar" href="javascript:void(0);" v-link="{name:'userhome',params:{username:collect.author.loginname}}">
-							<img :src="collect.author.avatar_url" :alt="collect.author.loginname">
-						</a>
-						<div class="art-inf">
-							<a class="title">{{collect.title}}</a>
-							<span class="last-time">{{collect.last_reply_at | getLastTime }}</span>
-						</div>
+					<div v-for="collect in topic_collect" class="collectitem clearfix">
+						<router-link :to="{name:'article',params:{id:collect.id}}">
+							<router-link class="avatar" :to="{name:'userhome',params:{username:collect.author.loginname}}">
+								<img :src="collect.author.avatar_url" :alt="collect.author.loginname">
+							</router-link>
+							<div class="art-inf">
+								<a class="title">{{collect.title}}</a>
+								<span class="last-time">{{collect.last_reply_at | getLastTime }}</span>
+							</div>
+						</router-link>
 					</div>
 					<div class="nodata" v-if="collectShow">
 						<div class="nodataimg"></div>
@@ -83,7 +87,6 @@
 <script>
 	import axios from 'axios';
 	import nvHeader from '../components/header.vue';
-	// import {getLoginState, getUserInfo} from '../vuex/getters';
 	export default {
 		data : function() {
 			return {
@@ -99,7 +102,16 @@
 				topic_collect : []
 			}
 		},
+		watch : {
+			// 当在userhome内的子路有发生改变时调用
+			$route : 'getUserHome'
+		},
 		mounted : function() {
+			this.getUserHome();	
+		},
+		methods : {
+			// 用户参与主题
+			getUserHome : function() {
 				this.user_name = this.$route.params.username;
 				// 获取创建主题列表和参与话题列表
 				axios.get('https://cnodejs.org/api/v1/user/'+this.user_name)
@@ -119,7 +131,6 @@
 				.catch(function(error) {
 					console.log('请求错误');
 				})
-			
 				// 获取收藏主题列表
 				axios.get('https://cnodejs.org/api/v1/topic_collect/'+this.user_name)
 				.then((response) => {
@@ -132,7 +143,7 @@
 				.catch(function(error) {
 					console.log('请求错误');
 				})
-				
+			}
 		},
 		components : {
 			nvHeader

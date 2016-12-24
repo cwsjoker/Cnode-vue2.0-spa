@@ -43,6 +43,11 @@ const userhome = resolve => {
         resolve(require('./vue/userhome.vue'));
     });
 }
+const usermessage = resolve => {
+    require.ensure(['./vue/usermessage.vue'], () => {
+        resolve(require('./vue/usermessage.vue'));
+    });
+}
 const routes = [{
         path: '/',
         name: 'home',
@@ -67,6 +72,10 @@ const routes = [{
         path: '/userhome/:username',
         name: 'userhome',
         component: userhome
+    },{
+        path: '/usermessage',
+        name: 'usermessage',
+        component: usermessage
     },{
         path: '*',
         component: home

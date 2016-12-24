@@ -1,6 +1,6 @@
 <template>
 	<div class="meun" :class="{'showMeun':showm}">
-		<div class="user_info" v-if="loginStatus">
+		<div class="user_info" v-if="loginStatus" @click="gotoUserhome">
 			<div class="avatar">
 				<img :src="userInfo.avatar" alt="">
 			</div>
@@ -11,7 +11,7 @@
 		<div class="meun-list">
 			<router-link class="item" to="/">首页</router-link>
 			<router-link class="item" to="/login" v-if="!loginStatus">登录</router-link>
-			<router-link class="item" to="/" v-if="loginStatus">未读消息<em v-if="messageCount !== 0" class="message-count">{{messageCount}}</em></router-link>
+			<router-link class="item" to="/usermessage" v-if="loginStatus">未读消息<em v-if="messageCount !== 0" class="message-count">{{messageCount}}</em></router-link>
 			<router-link class="item" to="/" v-if="loginStatus">设置</router-link>
 			<router-link class="item" to="/" v-if="loginStatus">发布话题</router-link>
 			<router-link class="item" to="/about">关于</router-link>
@@ -50,6 +50,9 @@
 				console.log(this.$store.default.getters.getLoginState);
 				console.log(this.loginStatus);
 				console.log(this.$store.default.getters.getNotMessageCount);
+			},
+			gotoUserhome : function() {
+				this.$router.push({ name: 'userhome', params: { username: this.userInfo.loginname }});
 			}
 		}
 	}

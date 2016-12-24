@@ -36,8 +36,8 @@
 		data : function() {
 			return {
 				initIndex : 0,
-				scroll : true,
-				showLoading : false,
+				scroll : true, //避免快速滚动，无限拉取数据源
+				showLoading : false, //加载列表小icon
 				itemTab : [
 					{'title' : '全部', 'type' : 'all'},
 					{'title' : '精华', 'type' : 'good'},
@@ -56,9 +56,7 @@
 		},
 		mounted : function() {
 			this.gerArtlist(this.initIndex);
-			window.onscroll = () => {
-                this.scrollArtlist();
-            };
+            window.addEventListener('scroll', this.scrollArtlist, false);
 		},
 		methods :  {
 			// 标签tab切换方法
@@ -83,7 +81,7 @@
 					}
 				})
 				.catch((error) => {
-					console.log('请求错误');
+					console.log(error);
 				})
 			},
 			// 超过滚动获取数据方法
@@ -105,11 +103,10 @@
 			nvHeader,
 			nvTop
 		},
-		destroyed : function() {
+		beforeDestroy : function() {
 			// 退出组件解除window的scroll事件,防止别的页面下拉加载。
-			// $(window).off('scroll');
+			window.removeEventListener('scroll', this.scrollArtlist, false);
 		}
-		// store : store	//在组件加入store，让它的子组件和store连接
 	}
 </script>
 <style lang="sass">

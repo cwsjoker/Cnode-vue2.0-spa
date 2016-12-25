@@ -67,8 +67,6 @@
 					'is' : false,
 					'title' : '收藏'
 				},
-				// replies : [],
-				// articleId : '12',
 				replythisid : ''
 			}
 		},
@@ -92,7 +90,7 @@
                     	};
                     	this.replies = this.$store.default.dispatch('setReplies', D.replies);
                     	// 判断本条回复是否自己已点赞
-                    	if(this.userInfo.id != ''){
+                    	if(this.LoginState){
                     		// 循环评论
 	                    	for (const repliesItem of this.replies) {
 	                    		// 循环评论的回复
@@ -118,8 +116,8 @@
 						if(response.data.success) {
 							const d = response.data;
 							for (const i of d.data) {
-								if (this.articleId === i.id) {
-									// console.log('用户已收藏文章');
+								if (artid === i.id) {
+									console.log('用户已收藏文章');
 									this.conllection.is = true;
 									this.conllection.title = '取消收藏';
 									break;
@@ -163,7 +161,7 @@
 					// 已收藏，进行取消收藏操作
 					axios.post('https://cnodejs.org/api/v1/topic_collect/de_collect', {
 						accesstoken : this.userInfo.accesstoken,
-						topic_id : this.articleId
+						topic_id : this.article_Id
 					})
 					.then((response) => {
 						if(response.data.success) {
@@ -178,7 +176,7 @@
 					// 未收藏，进行收藏操作
 					axios.post('https://cnodejs.org/api/v1/topic_collect/collect', {
 						accesstoken : this.userInfo.accesstoken,
-						topic_id : this.articleId
+						topic_id : this.article_Id
 					})
 					.then((response) => {
 						if(response.data.success) {
@@ -193,7 +191,7 @@
 			},
 			// 编辑文章
 			editTopic : function() {
-				this.$route.router.go({name : 'edittopic',params:{id:this.articleId}});
+				this.$router.push({name : 'edittopic',params:{id:this.articleId}});
 			},
 			// 是否能评论
 			replythis : function(id) {
@@ -202,14 +200,28 @@
 					this.$router.push({name : 'login'});
 					return;
 				}
-				console.log(id);
 				this.replythisid = id;
 			},
 			deletereply : function(id) {
-				// cnode暂时没有删除的api接口
+				cnode暂时没有删除的api接口
 				this.$store.default.dispatch('setTipShow', true);
 				this.$store.default.dispatch('setTipContent', '暂时不支持删除评论功能！');
 				return;
+				// axios.post('https://cnodejs.org/api/v1/reply/delete', {
+				// 	accesstoken : this.userInfo.accesstoken,
+				// 	reply_id : id
+				// })
+				// .then((response) => {
+				// 	if(response.data.success){
+				// 		// 评论成功
+				// 		console.log('删除成功');
+				// 	}else{
+				// 		// 提交评论失败
+				// 	}
+				// })
+				// .catch(function(error) {
+				// 	console.log(error);
+				// })
 			},
 			// 点赞
 			upreply : function(index, replieId, loginname) {

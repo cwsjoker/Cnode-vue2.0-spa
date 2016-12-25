@@ -16,7 +16,7 @@
 		data : function() {
 			return {
 				repliescontent : '',
-				last_text : '<br/><br/>来自炫酷吊炸天 <a class="form" href=https://github.com/cwsjoker/Cnode-vue-spa">Cnode</a>'
+				last_text : '<br/><br/>&lt;a href=https://github.com/cwsjoker/Cnode-vue-spa">来自炫酷吊炸天 Cnode</a>'
 			}
 		},
 		mounted : function() {
@@ -54,17 +54,6 @@
 							if(response.data.success){
 								// 评论成功
 								const time = new Date();
-								// this.replycontent.push({
-								// 	'author' : {
-								// 		'avatar_url' : this.userInfo.avatar,
-								// 		'loginname' : this.userInfo.loginname
-								// 	},
-								// 	'content' : this.repliescontent + this.last_text,
-								// 	'create_at' : time,
-								// 	'id' : this.userInfo.id,
-								// 	'reply_id' : id,
-								// 	'ups' : []
-								// });
 								axios.get('https://cnodejs.org/api/v1/topic/'+this.artid)
 								.then((response_reply) => {
 									if(response_reply.data.success) {

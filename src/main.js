@@ -48,6 +48,16 @@ const usermessage = resolve => {
         resolve(require('./vue/usermessage.vue'));
     });
 }
+const createtopic = resolve => {
+    require.ensure(['./vue/createtopic.vue'], () => {
+        resolve(require('./vue/createtopic.vue'));
+    });
+}
+const edittopic = resolve => {
+    require.ensure(['./vue/edittopic.vue'], () => {
+        resolve(require('./vue/edittopic.vue'));
+    });
+}
 const routes = [{
         path: '/',
         name: 'home',
@@ -76,6 +86,14 @@ const routes = [{
         path: '/usermessage',
         name: 'usermessage',
         component: usermessage
+    },{
+        path: '/createtopic',
+        name: 'createtopic',
+        component: createtopic
+    },{
+        path: '/edittopic/:topicid',
+        name: 'edittopic',
+        component: edittopic
     },{
         path: '*',
         component: home

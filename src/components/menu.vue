@@ -13,7 +13,7 @@
 			<router-link class="item" to="/login" v-if="!loginStatus">登录</router-link>
 			<router-link class="item" to="/usermessage" v-if="loginStatus">未读消息<em v-if="messageCount !== 0" class="message-count">{{messageCount}}</em></router-link>
 			<router-link class="item" to="/" v-if="loginStatus">设置</router-link>
-			<router-link class="item" to="/" v-if="loginStatus">发布话题</router-link>
+			<router-link class="item" to="/createtopic" v-if="loginStatus">发布话题</router-link>
 			<router-link class="item" to="/about">关于</router-link>
 		</div>
 		<div @click="m">click</div>

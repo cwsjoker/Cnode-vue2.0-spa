@@ -191,7 +191,7 @@
 			},
 			// 编辑文章
 			editTopic : function() {
-				this.$router.push({name : 'edittopic',params:{id:this.articleId}});
+				this.$router.push({name : 'edittopic',params : {topicid : this.article_Id}});
 			},
 			// 是否能评论
 			replythis : function(id) {

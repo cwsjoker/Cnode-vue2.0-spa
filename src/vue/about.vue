@@ -26,7 +26,7 @@
 </script>
 <style lang="sass">
 	.about {
-		margin-top: 200px;
+		margin-top: 200px ;
 		width: 100%;
 		height: 200px;
 		img {

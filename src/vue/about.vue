@@ -26,12 +26,7 @@
 </script>
 <style lang="sass">
 	.about {
-		position: absolute;
-		top: 0px;
-		left: 0px;
-		right: 0px;
-		bottom: 0px;
-		margin: auto;
+		margin-top: 200px;
 		width: 100%;
 		height: 200px;
 		img {

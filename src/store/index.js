@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -13,14 +14,21 @@ const store = new Vuex.Store({
 			'id' : '',
 			'accesstoken' : ''
 		},
+		// alert框提示内容
 		tipContent : '',
+		// alert框显示状态
 		tipShow : false,
+		// 用户未读消息条数
 		message_count : 0,
+		// 文章评论
 		replies : []
 	},
 	actions: {
 		isLogin({commit}) {
 			commit('ISLOGIN');
+		},
+		signOut({commit}) {
+			commit('SIGNOUT');
 		},
 		setUserInfo({commit}, userInfo) {
 			commit('SETUSERINFO', userInfo);
@@ -44,7 +52,7 @@ const store = new Vuex.Store({
 			state.isLogin = true;
 		},
 		// 退出登录
-		NOTLOGIN (state) {
+		SIGNOUT (state) {
 			state.isLogin = false;
 		},
 		// 设置登录用户信息

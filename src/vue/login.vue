@@ -47,17 +47,22 @@
 							'accesstoken' : this.strToken.trim()
 						}
 						this.$store.dispatch('setUserInfo', userInfo);
-							// 获取未读消息，并设置vuex
-							axios.get('https://cnodejs.org/api/v1/message/count?accesstoken='+ this.strToken.trim())
-							.then((response_count) => {
-								if (response_count.data.success) {
-									this.$store.dispatch('setNotMessageCount', response_count.data.data);
-									window.history.back();
-								}
-							})
-							.catch(function(error) {
-								console.log(error);
-							});
+						// 登录成功记录账户信息存放至localStorage已备下次自动登录
+						localStorage.setItem("cnode_accesstoken", userInfo.accesstoken);
+						localStorage.setItem("cnode_avatar", userInfo.avatar);
+						localStorage.setItem("cnode_id", userInfo.id);
+						localStorage.setItem("cnode_name", userInfo.name);
+						// 获取未读消息，并设置vuex
+						axios.get('https://cnodejs.org/api/v1/message/count?accesstoken='+ this.strToken.trim())
+						.then((response_count) => {
+							if (response_count.data.success) {
+								this.$store.dispatch('setNotMessageCount', response_count.data.data);
+								window.history.back();
+							}
+						})
+						.catch(function(error) {
+							console.log(error);
+						});
 					}else{
 						// 失败
 					}

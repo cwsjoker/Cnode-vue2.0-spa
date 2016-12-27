@@ -57,37 +57,41 @@
 		},
 		methods : {
 			submitTopic : function() {
-				const title = this.topicTitle.trim(),
-					  content = this.topicContainer.trim();
-				if (title.length <= 10 || content === '') {
-					this.$store.dispatch('setTipShow', true);
-					this.$store.dispatch('setTipContent','标题字少10个字以上或内容不能为空。');
-					return;
-				}
-				let url = '';
-				if (this.topicId) {
-					// 修改
-					url = 'https://cnodejs.org/api/v1/topics/update';
-				} else {
-					// 创建
-					url = 'https://cnodejs.org/api/v1/topics';
-				}
-				axios.post(url, {
-					'accesstoken' : this.userInfo.accesstoken,
-					'title' : title,
-					'tab' : this.topicType,
-					'content' : content,
-					'topic_id' : this.topicId
-				})
-				.then((response) => {
-					const data = response.data;
-					if(data.success) {
-						this.$router.push({name : 'article',params:{id:data.topic_id}});
+				if (this.LoginState) {
+					const title = this.topicTitle.trim(),
+						  content = this.topicContainer.trim();
+					if (title.length <= 10 || content === '') {
+						this.$store.dispatch('setTipShow', true);
+						this.$store.dispatch('setTipContent','标题字少10个字以上或内容不能为空。');
+						return;
 					}
-				})
-				.catch(function(error) {
-					console.log(error);
-				})
+					let url = '';
+					if (this.topicId) {
+						// 修改
+						url = 'https://cnodejs.org/api/v1/topics/update';
+					} else {
+						// 创建
+						url = 'https://cnodejs.org/api/v1/topics';
+					}
+					axios.post(url, {
+						'accesstoken' : this.userInfo.accesstoken,
+						'title' : title,
+						'tab' : this.topicType,
+						'content' : content,
+						'topic_id' : this.topicId
+					})
+					.then((response) => {
+						const data = response.data;
+						if(data.success) {
+							this.$router.push({name : 'article',params:{id:data.topic_id}});
+						}
+					})
+					.catch(function(error) {
+						console.log(error);
+					})
+				} else {
+					this.$router.push({name : 'login'});
+				}
 			}
 		},
 		computed : {

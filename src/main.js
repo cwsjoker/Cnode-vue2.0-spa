@@ -1,8 +1,9 @@
-var Vue = require('vue');
-var VueRouter = require('vue-router');
-// var axios = require('axios');
-var store = require('./store');
-var filters = require('./filters');
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import App from './App.vue';
+import store from './store';
+import * as filters from './filters';
+
 //引入css重置文件,基本的样式文件
 require('./css/reset.css');
 // 引入px与rem的换算
@@ -10,12 +11,11 @@ require('./js/equ.js');
 
 //实例化vue模块 
 Vue.use(VueRouter);
-// Vue.use(axios);
 Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
 
 const home = resolve => {
-    require.ensure(['./App.vue'], () => {
-        resolve(require('./App.vue'));
+    require.ensure(['./vue/home.vue'], () => {
+        resolve(require('./vue/home.vue'));
     });
 };
 const articleList = resolve => {
@@ -60,10 +60,6 @@ const edittopic = resolve => {
 }
 const routes = [{
         path: '/',
-        name: 'home',
-        component: home
-    },{
-        path: '/articleList',
         name: 'articleList',
         component: articleList
     },{
@@ -96,7 +92,7 @@ const routes = [{
         component: edittopic
     },{
         path: '*',
-        component: home
+        component: articleList
     }];
 const router = new VueRouter({
     mode: 'history',
@@ -105,5 +101,6 @@ const router = new VueRouter({
 });
 new Vue({
     router,
-    store
+    store,
+    render: h => h(App)
 }).$mount('#app');

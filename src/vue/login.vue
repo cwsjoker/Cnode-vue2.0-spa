@@ -26,9 +26,9 @@
 		},
 		methods : {
 			login : function() {
-				if(this.strToken.trim() === '') {
-					this.$store.default.dispatch('setTipShow', true);
-					this.$store.default.dispatch('setTipContent', 'accessToken不能为空！');
+				if (this.strToken.trim() === '') {
+					this.$store.dispatch('setTipShow', true);
+					this.$store.dispatch('setTipContent', 'accessToken不能为空！');
 					return;
 				}
 				const rqdata = {
@@ -36,27 +36,27 @@
 				}
 				axios.post('https://cnodejs.org/api/v1/accesstoken?accesstoken='+ this.strToken)
 				.then((response_info) => {
-					if(response_info.data.success){
+					if (response_info.data.success) {
 						const data = response_info.data;
 						// 登入成功改变isLogin的状态为true
-						this.$store.default.dispatch('isLogin');
+						this.$store.dispatch('isLogin');
 						const userInfo = {
 							'name' : data.loginname,
 							'avatar' : data.avatar_url,
 							'id' : data.id,
 							'accesstoken' : this.strToken.trim()
 						}
-						this.$store.default.dispatch('setUserInfo', userInfo);
+						this.$store.dispatch('setUserInfo', userInfo);
 							// 获取未读消息，并设置vuex
 							axios.get('https://cnodejs.org/api/v1/message/count?accesstoken='+ this.strToken.trim())
 							.then((response_count) => {
-								if(response_count.data.success) {
-									this.$store.default.dispatch('setNotMessageCount', response_count.data.data);
+								if (response_count.data.success) {
+									this.$store.dispatch('setNotMessageCount', response_count.data.data);
 									window.history.back();
 								}
 							})
 							.catch(function(error) {
-								console.log('请求错误');
+								console.log(error);
 							});
 					}else{
 						// 失败
@@ -64,8 +64,8 @@
 				})
 				.catch((error) => {
 					console.log(error);
-					this.$store.default.dispatch('setTipShow', true);
-					this.$store.default.dispatch('setTipContent', '错误的accessToken!');
+					this.$store.dispatch('setTipShow', true);
+					this.$store.dispatch('setTipContent', '错误的accessToken!');
 				})		
 			}
 		},

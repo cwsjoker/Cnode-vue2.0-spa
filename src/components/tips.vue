@@ -10,16 +10,16 @@
 	export default {
 		computed : {
 			tipShow() {
-				return this.$store.default.getters.getTipShow;
+				return this.$store.getters.getTipShow;
 			},
 			tipShowContent() {
-				return this.$store.default.getters.getTipContent;
+				return this.$store.getters.getTipContent;
 			}
 		},
 		methods : {
 			isHide : function() {
-				this.$store.default.dispatch('setTipShow', false);
-				this.$store.default.dispatch('setTipContent', '');
+				this.$store.dispatch('setTipShow', false);
+				this.$store.dispatch('setTipContent', '');
 			}
 		}
 

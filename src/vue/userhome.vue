@@ -116,7 +116,7 @@
 				// 获取创建主题列表和参与话题列表
 				axios.get('https://cnodejs.org/api/v1/user/'+this.user_name)
 				.then((response) => {
-					if(response.data.success){
+					if (response.data.success) {
 						const d = response.data;
 						this.user_avatar = d.data.avatar_url;
 						this.score = d.data.score;
@@ -129,19 +129,19 @@
 					}
 				})
 				.catch(function(error) {
-					console.log('请求错误');
+					console.log(error);
 				})
 				// 获取收藏主题列表
 				axios.get('https://cnodejs.org/api/v1/topic_collect/'+this.user_name)
 				.then((response) => {
-					if(response.data.success){
+					if (response.data.success) {
 						const d = response.data;
 						this.topic_collect = d.data;
 						this.topic_collect.length === 0 ? this.collectShow = true : this.collectShow = false
 					}
 				})
 				.catch(function(error) {
-					console.log('请求错误');
+					console.log(error);
 				})
 			}
 		},

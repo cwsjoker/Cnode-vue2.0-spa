@@ -12,7 +12,6 @@
 			<router-link class="item" to="/">首页</router-link>
 			<router-link class="item" to="/login" v-if="!loginStatus">登录</router-link>
 			<router-link class="item" to="/usermessage" v-if="loginStatus">未读消息<em v-if="messageCount !== 0" class="message-count">{{messageCount}}</em></router-link>
-			<router-link class="item" to="/" v-if="loginStatus">设置</router-link>
 			<router-link class="item" to="/createtopic" v-if="loginStatus">发布话题</router-link>
 			<router-link class="item" to="/about">关于</router-link>
 		</div>
@@ -22,34 +21,28 @@
 <script>
 	export default {
 		props : ['showm'],
-		data : function() {
-			return {
-				// user_name : this.$store.default.getters.getUserInfo.loginname || '',
-				// user_avatar : this.$store.default.getters.getUserInfo.avatar || ''
-			}
-		},
 		computed : {
 			loginStatus() {
-				return this.$store.default.getters.getLoginState;
+				return this.$store.getters.getLoginState;
 			},
 			messageCount() {
-				return this.$store.default.getters.getNotMessageCount;
+				return this.$store.getters.getNotMessageCount;
 			},
 			userInfo() {
-				return this.$store.default.getters.getUserInfo;
+				return this.$store.getters.getUserInfo;
 			}
 		},
 		methods : {
 			m : function() {
 				console.log(this.$store);
-				console.log(this.$store.default.getters.getLoginState);
+				console.log(this.$store.getters.getLoginState);
 				console.log(this.loginStatus);
-				console.log(this.$store.default.getters.getNotMessageCount);
-				this.$store.default.dispatch('isLogin');
-				this.$store.default.dispatch('setNotMessageCount', 10);
-				console.log(this.$store.default.getters.getLoginState);
+				console.log(this.$store.getters.getNotMessageCount);
+				this.$store.dispatch('isLogin');
+				this.$store.dispatch('setNotMessageCount', 10);
+				console.log(this.$store.getters.getLoginState);
 				console.log(this.loginStatus);
-				console.log(this.$store.default.getters.getNotMessageCount);
+				console.log(this.$store.getters.getNotMessageCount);
 			},
 			gotoUserhome : function() {
 				this.$router.push({ name: 'userhome', params: { username: this.userInfo.loginname }});

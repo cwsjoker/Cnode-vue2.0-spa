@@ -48,7 +48,7 @@
 			}
 		},
 		mounted : function() {
-			if(this.loginStatus) {
+			if (this.loginStatus) {
 				// 获取当前用户的已读和未读消息
 				const rqdata = {
 					'accesstoken' : this.userInfo.accesstoken
@@ -58,19 +58,19 @@
 				})
 				.then((response) => {
 					const d = response.data;
-					if(d.success) {
+					if (d.success) {
 						for (const i of d.data.has_read_messages) {
-							if(i.type === 'at') {
+							if (i.type === 'at') {
 								i['text_desc'] = '@中你';
-							} else if(i.type === 'reply') {
+							} else if (i.type === 'reply') {
 								i['text_desc'] = '回复你';
 							}
 						}
 						this.has_read_messages = d.data.has_read_messages;
 						for (const i of d.data.hasnot_read_messages) {
-							if(i.type === 'at') {
+							if (i.type === 'at') {
 								i['text_desc'] = '@中你';
-							} else if(i.type === 'reply') {
+							} else if (i.type === 'reply') {
 								i['text_desc'] = '回复你';
 							}
 						}
@@ -86,10 +86,10 @@
 					'accesstoken' : this.userInfo.accesstoken
 				})
 				.then((response) => {
-					if(response.data.success) {
+					if (response.data.success) {
 						console.log('标记阅读成功');
 						// 设置未阅读数为0
-						this.$store.default.dispatch('setNotMessageCount', 0);
+						this.$store.dispatch('setNotMessageCount', 0);
 					}
 				})
 				.catch(function(error) {
@@ -104,10 +104,10 @@
 		},
 		computed : {
 			loginStatus : function() {
-				return this.$store.default.getters.getLoginState;
+				return this.$store.getters.getLoginState;
 			},
 			userInfo : function() {
-				return this.$store.default.getters.getUserInfo;
+				return this.$store.getters.getUserInfo;
 			}
 		},
 		components : {

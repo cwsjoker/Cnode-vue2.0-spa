@@ -75,7 +75,7 @@
 				// 获取文章详情
 				axios.get('https://cnodejs.org/api/v1/topic/'+artid)
 				.then((response) => {
-                    if(response.data.success){
+                    if (response.data.success) {
                     	var D = response.data.data;
                     	this.art.title = D.title;
                     	this.art.content = D.content;
@@ -88,14 +88,14 @@
                     	for (const replies of D.replies) {
                     		replies.isup = false;
                     	};
-                    	this.replies = this.$store.default.dispatch('setReplies', D.replies);
+                    	this.replies = this.$store.dispatch('setReplies', D.replies);
                     	// 判断本条回复是否自己已点赞
-                    	if(this.LoginState){
+                    	if (this.LoginState) {
                     		// 循环评论
 	                    	for (const repliesItem of this.replies) {
 	                    		// 循环评论的回复
 	                    		for (const repliesItemUps of repliesItem.ups) {
-	                    			if(repliesItemUps === this.userInfo.id){
+	                    			if (repliesItemUps === this.userInfo.id) {
 	                    				// console.log('已赞');
 	                    				repliesItem.isup = true;
 	                    				break;
@@ -109,11 +109,11 @@
 					console.log(error);
 				})
 				// 更改收藏状态
-				if(this.LoginState) {
+				if (this.LoginState) {
 					// 登录状态，判断是否收藏本文章
 					axios.get('https://cnodejs.org/api/v1/topic_collect/' + this.userInfo.loginname)
 					.then((response) => {
-						if(response.data.success) {
+						if (response.data.success) {
 							const d = response.data;
 							for (const i of d.data) {
 								if (artid === i.id) {
@@ -128,20 +128,22 @@
 					.catch(function(error) {
 						console.log(error);
 					})
-				} 
+				}
+				// 主题加载完成自动返回顶部
+				window.scroll(0, 0);
 		},
 		computed : {
 			// 登陆状态
 			LoginState() {
-				return this.$store.default.getters.getLoginState;
+				return this.$store.getters.getLoginState;
 			},
 			// 登陆用户信息
 			userInfo() {
-				return this.$store.default.getters.getUserInfo;
+				return this.$store.getters.getUserInfo;
 			},
 			// 获取文章评论
 			replies() {
-				return this.$store.default.getters.getReplies;
+				return this.$store.getters.getReplies;
 			},
 			// 获取文章id
 			article_Id() {
@@ -151,13 +153,13 @@
 		methods : {
 			// 收藏
 			collect : function() {
-				if(!this.LoginState) {
+				if (!this.LoginState) {
 					// 未登陆不能进行主题收藏
-					this.$store.default.dispatch('setTipShow', true);
-					this.$store.default.dispatch('setTipContent', '您还未登录，不能进行收藏！');
+					this.$store.dispatch('setTipShow', true);
+					this.$store.dispatch('setTipContent', '您还未登录，不能进行收藏！');
 					return;
 				}
-				if(this.conllection.is) {
+				if (this.conllection.is) {
 					// 已收藏，进行取消收藏操作
 					axios.post('https://cnodejs.org/api/v1/topic_collect/de_collect', {
 						accesstoken : this.userInfo.accesstoken,
@@ -172,7 +174,7 @@
 					.catch(function(error) {
 						console.log(error);
 					});
-				}else {
+				} else {
 					// 未收藏，进行收藏操作
 					axios.post('https://cnodejs.org/api/v1/topic_collect/collect', {
 						accesstoken : this.userInfo.accesstoken,
@@ -195,7 +197,7 @@
 			},
 			// 是否能评论
 			replythis : function(id) {
-				if(!this.LoginState){
+				if (!this.LoginState) {
 					// 未登陆，不能进行评论,直接去登录页面
 					this.$router.push({name : 'login'});
 					return;
@@ -204,50 +206,35 @@
 			},
 			deletereply : function(id) {
 				cnode暂时没有删除的api接口
-				this.$store.default.dispatch('setTipShow', true);
-				this.$store.default.dispatch('setTipContent', '暂时不支持删除评论功能！');
+				this.$store.dispatch('setTipShow', true);
+				this.$store.dispatch('setTipContent', '暂时不支持删除评论功能！');
 				return;
-				// axios.post('https://cnodejs.org/api/v1/reply/delete', {
-				// 	accesstoken : this.userInfo.accesstoken,
-				// 	reply_id : id
-				// })
-				// .then((response) => {
-				// 	if(response.data.success){
-				// 		// 评论成功
-				// 		console.log('删除成功');
-				// 	}else{
-				// 		// 提交评论失败
-				// 	}
-				// })
-				// .catch(function(error) {
-				// 	console.log(error);
-				// })
 			},
 			// 点赞
 			upreply : function(index, replieId, loginname) {
-				if(!this.LoginState){
+				if (!this.LoginState) {
 					// 用户还没有登录，不能进行点赞功能
-					this.$store.default.dispatch('setTipShow', true);
-					this.$store.default.dispatch('setTipContent', '您还未登录，不能进行点赞！');
+					this.$store.dispatch('setTipShow', true);
+					this.$store.dispatch('setTipContent', '您还未登录，不能进行点赞！');
 					return;
 				}
-				if(loginname === this.userInfo.loginname) {
+				if (loginname === this.userInfo.loginname) {
 					// 不能为自己的评论进行点赞功能
-					this.$store.default.dispatch('setTipShow', true);
-					this.$store.default.dispatch('setTipContent', '不能为自己点赞！');
+					this.$store.dispatch('setTipShow', true);
+					this.$store.dispatch('setTipContent', '不能为自己点赞！');
 					return;
 				}
 				axios.post('https://cnodejs.org/api/v1/reply/'+replieId+'/ups', {
 					accesstoken : this.userInfo.accesstoken
 				})
 				.then((response) => {
-					if(response.data.success){
+					if (response.data.success) {
 						const data = response.data;
-						if(data.action === 'up'){
+						if (data.action === 'up') {
 							// 点赞
 							this.replies[index].ups.push('');
 							this.replies[index].isup = true;
-						}else{
+						} else {
 							// 取消点赞
 							this.replies[index].ups.pop('');
 							this.replies[index].isup = false;

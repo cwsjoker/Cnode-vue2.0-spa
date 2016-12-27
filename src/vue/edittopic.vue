@@ -18,7 +18,7 @@
 		computed : {
 			// 登陆状态
 			LoginState() {
-				return this.$store.default.getters.getLoginState;
+				return this.$store.getters.getLoginState;
 			},
 			// 获取主题id
 			topicid() {

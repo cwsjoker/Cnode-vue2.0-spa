@@ -34,7 +34,7 @@
 			}
 		},
 		mounted : function() {
-			if(this.topicId) {
+			if (this.topicId) {
 				// 修改主题
 				const rqdata = {
 					mdrender : false
@@ -44,7 +44,7 @@
 				})
 				.then((response) => {
 					const data = response.data;
-					if(data.success) {
+					if (data.success) {
 						this.topicType = data.data.tab;
 						this.topicTitle = data.data.title;
 						this.topicContainer = data.data.content;
@@ -59,16 +59,16 @@
 			submitTopic : function() {
 				const title = this.topicTitle.trim(),
 					  content = this.topicContainer.trim();
-				if(title.length <= 10 || content === '') {
-					this.$store.default.dispatch('setTipShow', true);
-					this.$store.default.dispatch('setTipContent','标题字少10个字以上或内容不能为空。');
+				if (title.length <= 10 || content === '') {
+					this.$store.dispatch('setTipShow', true);
+					this.$store.dispatch('setTipContent','标题字少10个字以上或内容不能为空。');
 					return;
 				}
 				let url = '';
-				if(this.topicId) {
+				if (this.topicId) {
 					// 修改
 					url = 'https://cnodejs.org/api/v1/topics/update';
-				}else{
+				} else {
 					// 创建
 					url = 'https://cnodejs.org/api/v1/topics';
 				}
@@ -93,11 +93,11 @@
 		computed : {
 			// 登陆状态
 			LoginState() {
-				return this.$store.default.getters.getLoginState;
+				return this.$store.getters.getLoginState;
 			},
 			// 登陆用户信息
 			userInfo() {
-				return this.$store.default.getters.getUserInfo;
+				return this.$store.getters.getUserInfo;
 			}
 		},
 		components : {

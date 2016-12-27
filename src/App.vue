@@ -1,16 +1,27 @@
 <template>
 	<div>
-		<nv-header></nv-header>
-		<article-list></article-list>
+		<transition name="fade" class="router">
+			<router-view class="r"></router-view>
+		</transition>
 	</div>
 </template>
-<script>
-	import nvHeader from './components/header.vue';
-	import articleList from './vue/articleList.vue';
-	export default {
-		components : {
-			'nv-header' : nvHeader,
-			'article-list' : articleList
-		}
+<style lang="sass">
+	.fade-enter-active, .fade-leave-active {
+		transition: all .3s ease;
+		transform: translateX(0px);
 	}
-</script>
+	.fade-enter, .fade-leave-active {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+	.router {
+		width: 100%;
+		/*transform: translateX(-300px);*/
+		/*position: absolute;*/
+		/*transition: all .9s cubiz-bezier(.55, 0, .1, 1);*/
+	}
+	.r {
+		width: 100%;
+		position: absolute;
+	}
+</style>

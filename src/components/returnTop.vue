@@ -17,9 +17,9 @@
 				this.showTop = false;
 			},
 			scrollEvent : function () {
-				if(parseFloat(window.scrollY) > 150){
+				if (parseFloat(window.scrollY) > 150) {
 					this.showTop = true;
-				}else{
+				} else {
 					this.showTop = false;
 				}
 			}

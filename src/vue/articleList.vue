@@ -74,7 +74,7 @@
 					params : rqdata
 				})
 				.then((response) => {
-					if(response.data.success){
+					if (response.data.success) {
 						this.artlist = response.data['data'];
 						this.scroll = true;
 						this.showLoading = false;
@@ -86,7 +86,7 @@
 			},
 			// 超过滚动获取数据方法
 			scrollArtlist : function() {
-				if(this.scroll){
+				if (this.scroll) {
 					let totalheight = parseFloat(window.innerHeight) + parseFloat(window.scrollY);
 	          		if (document.body.clientHeight <= totalheight + 200) {
 	                    this.scroll = false;

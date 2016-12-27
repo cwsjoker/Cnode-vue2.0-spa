@@ -20,7 +20,7 @@
 			}
 		},
 		mounted : function() {
-			if(this.replyid){
+			if (this.replyid) {
 				this.repliescontent = '@' + this.replyto + ' ';
 			}
 			this.$refs.textarea.focus();
@@ -28,19 +28,19 @@
 		computed: {
 			// 登陆状态
 			LoginState() {
-				return this.$store.default.getters.getLoginState;
+				return this.$store.getters.getLoginState;
 			},
 			// 登陆用户信息
 			userInfo() {
-				return this.$store.default.getters.getUserInfo;
+				return this.$store.getters.getUserInfo;
 			}
 		},
 		methods : {
 			recomment : function() {
 				// 判断是否登录，如果为登录去登录页面
-				if(this.LoginState){
+				if (this.LoginState) {
 					// 判断内容是否为空
-					if(this.repliescontent !== ''){
+					if (this.repliescontent !== '') {
 						// 回复内容不为空
 						// const arr = window.location.href.split('/');
 						let id = '';
@@ -51,14 +51,14 @@
 							replies : id
 						})
 						.then((response) => {
-							if(response.data.success){
+							if (response.data.success) {
 								// 评论成功
 								const time = new Date();
 								axios.get('https://cnodejs.org/api/v1/topic/'+this.artid)
 								.then((response_reply) => {
 									if(response_reply.data.success) {
 										const D = response_reply.data.data;
-										this.$store.default.dispatch('setReplies', D.replies);
+										this.$store.dispatch('setReplies', D.replies);
 										this.repliescontent = '';
 										if(this.replythisid) {
 											this.$emit('recomment');
@@ -68,19 +68,19 @@
 								.catch(function(error) {
 									console.log(error);
 								})
-							}else{
+							} else {
 								// 提交评论失败
 							}
 						})
 						.catch(function(error) {
 							console.log(error);
 						})
-					}else{
+					} else {
 						// 内容为空
-						this.$store.default.dispatch('setTipShow', true);
-						this.$store.default.dispatch('setTipContent', '回复内容不能为空！');
+						this.$store.dispatch('setTipShow', true);
+						this.$store.dispatch('setTipContent', '回复内容不能为空！');
 					}
-				}else{
+				} else {
 					this.$router.push({name : 'login'});
 				}
 			}
